@@ -1,5 +1,3 @@
-package P1;
-
 import java.sql.*;
 
 public class Db {
