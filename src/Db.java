@@ -36,4 +36,8 @@ public class Db {
             System.out.println(e);
         }
     }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
 }
