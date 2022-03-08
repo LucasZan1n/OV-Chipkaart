@@ -13,6 +13,14 @@ public class Reiziger {
 
     }
 
+    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
+        this.setId(id);
+        this.setVoorletters(voorletters);
+        this.setTussenvoegsel(tussenvoegsel);
+        this.setAchternaam(achternaam);
+        this.setGeboortedatum(geboortedatum);
+    }
+
     public void setId(int id) {
         this.id = id;
     }
