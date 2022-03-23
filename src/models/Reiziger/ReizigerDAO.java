@@ -3,10 +3,10 @@ package models.Reiziger;
 import java.util.List;
 
 public interface ReizigerDAO {
-    boolean save(Reiziger reiziger);
-    boolean update(Reiziger reiziger);
-    boolean delete(Reiziger reiziger);
-    Reiziger findById(int id);
-    List<Reiziger> findByGbdatum(String datum);
-    List<Reiziger> findAll();
+    boolean save(ReizigerModel reiziger);
+    boolean update(ReizigerModel reiziger);
+    boolean delete(ReizigerModel reiziger);
+    ReizigerModel findById(int id);
+    List<ReizigerModel> findByGbdatum(String datum);
+    List<ReizigerModel> findAll();
 }

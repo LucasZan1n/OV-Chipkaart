@@ -1,24 +1,28 @@
 package models.Reiziger;
 
+import models.Adres.AdresModel;
+
 import java.sql.Date;
 
-public class Reiziger {
+public class ReizigerModel {
     private int id;
     private String voorletters;
     private String tussenvoegsel;
     private String achternaam;
     private Date geboortedatum;
+    private AdresModel adres;
 
-    public Reiziger() {
+    public ReizigerModel() {
 
     }
 
-    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
+    public ReizigerModel(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum, AdresModel adres) {
         this.setId(id);
         this.setVoorletters(voorletters);
         this.setTussenvoegsel(tussenvoegsel);
         this.setAchternaam(achternaam);
         this.setGeboortedatum(geboortedatum);
+        this.adres = adres;
     }
 
     public void setId(int id) {
@@ -41,6 +45,10 @@ public class Reiziger {
         this.geboortedatum = geboortedatum;
     }
 
+    public void setAdres(AdresModel adres) {
+        this.adres = adres;
+    }
+
     public int getId() {
         return id;
     }
@@ -61,12 +69,17 @@ public class Reiziger {
         return geboortedatum;
     }
 
+    public AdresModel getAdres() {
+        return adres;
+    }
+
     public String toString() {
         return "Reiziger data:\nid: " + id +
                 "\nvoorletters: " + voorletters +
                 "\ntussenvoegsel: " + tussenvoegsel +
                 "\nachternaam: " + achternaam +
-                "\ngeboortedatum: " + geboortedatum;
+                "\ngeboortedatum: " + geboortedatum +
+                "\n" + adres;
     }
 
 

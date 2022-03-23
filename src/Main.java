@@ -1,4 +1,7 @@
-import models.Reiziger.Reiziger;
+import models.Adres.AdresDAO;
+import models.Adres.AdresDAOPsql;
+import models.Adres.AdresModel;
+import models.Reiziger.ReizigerModel;
 import models.Reiziger.ReizigerDAO;
 import models.Reiziger.ReizigerDAOPsql;
 
@@ -10,13 +13,15 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         Db db = new Db();
-        ReizigerDAO dao = new ReizigerDAOPsql(db.getConnection());
-//        Main.testConnection();
-        try {
-            testReizigerDAO(dao);
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
+        ReizigerDAOPsql dao = new ReizigerDAOPsql(db.getConnection());
+        AdresDAOPsql adresDao = new AdresDAOPsql(db.getConnection());
+
+        testOneToOneRelationship(dao, adresDao);
+//        try {
+//            testAdresDAOPsql(adresDao, dao);
+//        } catch (SQLException e) {
+//            System.out.println(e);
+//        }
     }
 
     public static void testConnection() {
@@ -41,55 +46,31 @@ public class Main {
 
     }
 
-    public static void testReizigerDAOCustom() {
-        Reiziger reizigerDummy = new Reiziger();
-        reizigerDummy.setId(23);
-        reizigerDummy.setVoorletters("A");
-        reizigerDummy.setTussenvoegsel("van");
-        reizigerDummy.setAchternaam("Schagen");
-        reizigerDummy.setGeboortedatum(new Date(800));
-
-        Db db = new Db();
-        ReizigerDAOPsql dao = new ReizigerDAOPsql(db.getConnection());
-//        System.out.println(dao.update(reizigerDummy));
-        System.out.println(dao.delete(reizigerDummy));
+    public static void testAdresDAOPsql(AdresDAO adresDAO, ReizigerDAO rdao) {
+        ReizigerModel r = new ReizigerModel();
+        r.setId(2);
+        System.out.println(adresDAO.findByReiziger(r));
     }
 
     /**
-     * P2. Reiziger DAO: persistentie van een klasse
-     *
-     * Deze methode test de CRUD-functionaliteit van de Reiziger DAO
-     *
-     * @throws SQLException
+     * Test voor opdracht P3
      */
-    private static void testReizigerDAO(ReizigerDAO rdao) throws SQLException {
-        System.out.println("\n---------- Test ReizigerDAO -------------");
+    public static void testOneToOneRelationship(ReizigerDAOPsql rDAO, AdresDAOPsql aDAO) {
+        AdresModel adres = new AdresModel(6, "1423GK", "4", "Jan van Galen straat", "Gouda", 6);
+        ReizigerModel barry = new ReizigerModel(6, "B", "de", "Vries", Date.valueOf("1990-12-12"), adres);
 
-        // Haal alle reizigers op uit de database
-        List<Reiziger> reizigers = rdao.findAll();
-        System.out.println("[Test] ReizigerDAO.findAll() geeft de volgende reizigers:");
-        for (Reiziger r : reizigers) {
-            System.out.println(r);
-        }
-        System.out.println();
+        System.out.println("Resultaten find all ----------------");
+        System.out.println(rDAO.findAll());
 
-        // Maak een nieuwe reiziger aan en persisteer deze in de database
-        String gbdatum = "1981-03-14";
-        Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
-        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rdao.save(sietske);
-        reizigers = rdao.findAll();
-        System.out.println(reizigers.size() + " reizigers\n");
+        rDAO.save(barry);
 
-        // Wijzig een reiziger
-        Reiziger peter = new Reiziger(77, "P", "", "Boers", java.sql.Date.valueOf(gbdatum));
-        rdao.update(peter);
-        System.out.println(sietske + "\nIs veranderd naar:\n" + rdao.findById(77));
+        // Vind adres bij reiziger
+        System.out.println("Vind adres bij reiziger ----------------");
+        System.out.println(aDAO.findByReiziger(barry));
 
-        // Verwijder een reiziger
-        rdao.delete(peter);
-        System.out.println("Resultaat reiziger met id 77: " + rdao.findById(77));
-
-        // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
+        // Als het goed is moet het adres ook verwijderd zijn na het verwijderen van de reiziger
+        aDAO.delete(adres);
+        System.out.println("Zou null moeten zijn: ----------------");
+        System.out.println(rDAO.findById(6));
     }
 }
