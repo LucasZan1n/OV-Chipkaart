@@ -2,6 +2,8 @@ package models.Reiziger;
 
 import models.Adres.AdresDAOPsql;
 import models.Adres.AdresModel;
+import models.OVChipkaart.OVChipkaartDAOPsql;
+import models.OVChipkaart.OVChipkaartModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -29,6 +31,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             if (reiziger.getAdres() != null) {
                 new AdresDAOPsql(connection).save(reiziger.getAdres());
+            }
+
+            for (OVChipkaartModel ovChipkaart : reiziger.getOvChipkaarten()) {
+                new OVChipkaartDAOPsql(connection).save(ovChipkaart);
             }
 
             return true;
@@ -69,6 +75,16 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             statement.execute();
             statement.close();
+
+            OVChipkaartDAOPsql oDAOPsql = new OVChipkaartDAOPsql(connection);
+            List<OVChipkaartModel> ovChipkaarten = reiziger.getOvChipkaarten();
+
+            // Delete ovchipkaarten that are connected
+            if (!ovChipkaarten.isEmpty()) {
+                for (OVChipkaartModel ovChipkaartModel : reiziger.getOvChipkaarten()) {
+                    oDAOPsql.delete(ovChipkaartModel);
+                }
+            }
 
             return true;
         } catch(SQLException e) {
