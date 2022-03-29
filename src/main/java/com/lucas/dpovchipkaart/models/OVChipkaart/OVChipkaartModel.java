@@ -1,6 +1,10 @@
 package com.lucas.dpovchipkaart.models.OVChipkaart;
 
+import com.lucas.dpovchipkaart.models.Product.ProductModel;
+
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OVChipkaartModel {
     private int kaart_nummer;
@@ -8,6 +12,7 @@ public class OVChipkaartModel {
     private int klasse;
     private double saldo;
     private int reiziger_id;
+    private List<ProductModel> producten = new ArrayList<ProductModel>();
 
     public OVChipkaartModel() {
 
