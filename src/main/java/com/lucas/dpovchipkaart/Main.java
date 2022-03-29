@@ -1,11 +1,13 @@
-import models.Adres.AdresDAO;
-import models.Adres.AdresDAOPsql;
-import models.Adres.AdresModel;
-import models.OVChipkaart.OVChipkaartDAOPsql;
-import models.OVChipkaart.OVChipkaartModel;
-import models.Reiziger.ReizigerModel;
-import models.Reiziger.ReizigerDAO;
-import models.Reiziger.ReizigerDAOPsql;
+package com.lucas.dpovchipkaart;
+
+import com.lucas.dpovchipkaart.models.Adres.AdresDAO;
+import com.lucas.dpovchipkaart.models.Adres.AdresDAOPsql;
+import com.lucas.dpovchipkaart.models.Adres.AdresModel;
+import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartDAOPsql;
+import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartModel;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerDAO;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerDAOPsql;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerModel;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -19,22 +21,29 @@ public class Main {
     private static OVChipkaartDAOPsql oDAOPsql;
 
     public static void main(String[] args) {
-        Db db = new Db();
-        ReizigerDAOPsql dao = new ReizigerDAOPsql(db.getConnection());
-        AdresDAOPsql adresDao = new AdresDAOPsql(db.getConnection());
-        OVChipkaartDAOPsql ovChipkaartDAOPsql = new OVChipkaartDAOPsql(db.getConnection());
+        initializeDaoPsqls();
 
-        rDAOPsql = dao;
-        aDAOPsql = adresDao;
-        oDAOPsql = ovChipkaartDAOPsql;
 
-        testOneToOneRelationship(dao, adresDao);
+//        testOneToOneRelationship(dao, adresDao);
 //        try {
 //            testAdresDAOPsql(adresDao, dao);
         testOneToManyRelationShip();
 //        } catch (SQLException e) {
 //            System.out.println(e);
 //        }
+    }
+
+    private static void initializeDaoPsqls() {
+        Db db = new Db();
+
+        rDAOPsql = new ReizigerDAOPsql(db.getConnection());
+        aDAOPsql = new AdresDAOPsql(db.getConnection());
+        oDAOPsql = new OVChipkaartDAOPsql(db.getConnection());
+
+        rDAOPsql.setAdresDAOPsql(aDAOPsql);
+        rDAOPsql.setOvChipkaartDAOPsql(oDAOPsql);
+
+        aDAOPsql.setReizigerDAOPsql(rDAOPsql);
     }
 
     public static void testConnection() {
@@ -99,15 +108,20 @@ public class Main {
         ovChipkaarten.add(ov1);
         ovChipkaarten.add(ov2);
         ReizigerModel peter = new ReizigerModel(6, "P", "van", "Dongen", Date.valueOf("2000-12-12"), adres, ovChipkaarten);
+//
+//        System.out.println("Alle resultaten-----------");
+//        System.out.println(rDAOPsql.findAll());
+//        rDAOPsql.save(peter);
+//
+//        System.out.println("Alle resultaten met nieuwe reiziger-----------");
+//        System.out.println(rDAOPsql.findAll());
+//
+//        System.out.println("Vind ov kaarten bij reiziger------------");
+//        System.out.println(aDAOPsql.findByReiziger(peter));
 
-        System.out.println("Alle resultaten-----------");
-        System.out.println(rDAOPsql.findAll());
-        rDAOPsql.save(peter);
-
-        System.out.println("Alle resultaten met nieuwe reiziger-----------");
-        System.out.println(rDAOPsql.findAll());
-
-        System.out.println("Vind ov kaarten bij reiziger------------");
-        System.out.println(aDAOPsql.findByReiziger(peter));
+        // Delete
+        rDAOPsql.delete(peter);
+        System.out.println("Should return null");
+        System.out.println(rDAOPsql.findById(6));
     }
 }

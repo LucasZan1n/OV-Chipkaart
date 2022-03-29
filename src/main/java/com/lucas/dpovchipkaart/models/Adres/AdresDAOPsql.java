@@ -1,7 +1,7 @@
-package models.Adres;
+package com.lucas.dpovchipkaart.models.Adres;
 
-import models.Reiziger.ReizigerDAOPsql;
-import models.Reiziger.ReizigerModel;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerDAOPsql;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerModel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,9 +12,14 @@ import java.util.List;
 
 public class AdresDAOPsql implements AdresDAO {
     private Connection connection;
+    private ReizigerDAOPsql reizigerDAOPsql;
 
     public AdresDAOPsql(Connection connection) {
         this.connection = connection;
+    }
+
+    public void setReizigerDAOPsql(ReizigerDAOPsql reizigerDAOPsql) {
+        this.reizigerDAOPsql = reizigerDAOPsql;
     }
 
     public boolean save(AdresModel adres) {
@@ -64,7 +69,7 @@ public class AdresDAOPsql implements AdresDAO {
             statement.execute();
             statement.close();
 
-            new ReizigerDAOPsql(connection).delete(new ReizigerDAOPsql(connection).findById(adres.getId()));
+            this.reizigerDAOPsql.delete(this.reizigerDAOPsql.findById(adres.getId()));
 
             return true;
         } catch (SQLException e) {
@@ -78,8 +83,8 @@ public class AdresDAOPsql implements AdresDAO {
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM adres WHERE reiziger_id=?");
             statement.setInt(1, reiziger.getId());
-            System.out.println(this.fetch(statement));
-            AdresModel adres = this.fetch(statement).get(0);
+            List<AdresModel> result = this.fetch(statement);
+            AdresModel adres = result.isEmpty() ? null : result.get(0);
             return adres;
         } catch(SQLException e) {
             System.err.println(e);

@@ -1,6 +1,0 @@
-Alle reizigers:
-	#1: G. van Rijn(2002-09-17)
-	#2: B. van Rijn(2002-10-22)
-	#3: H. Lubben(1998-08-11)
-	#4: F. Memari(2002-12-03)
-	#5: G. Piccardo(2002-12-03)

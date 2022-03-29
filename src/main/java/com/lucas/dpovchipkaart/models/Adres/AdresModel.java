@@ -1,4 +1,4 @@
-package models.Adres;
+package com.lucas.dpovchipkaart.models.Adres;
 
 public class AdresModel {
     private int id;

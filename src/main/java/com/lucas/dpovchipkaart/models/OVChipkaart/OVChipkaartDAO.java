@@ -1,6 +1,6 @@
-package models.OVChipkaart;
+package com.lucas.dpovchipkaart.models.OVChipkaart;
 
-import models.Reiziger.ReizigerModel;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerModel;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
-package models.Reiziger;
+package com.lucas.dpovchipkaart.models.Reiziger;
 
-import models.Adres.AdresModel;
-import models.OVChipkaart.OVChipkaartModel;
+import com.lucas.dpovchipkaart.models.Adres.AdresModel;
+import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartModel;
 
 import java.sql.Date;
 import java.util.List;

@@ -1,7 +1,6 @@
-package models.OVChipkaart;
+package com.lucas.dpovchipkaart.models.OVChipkaart;
 
-import models.Adres.AdresDAOPsql;
-import models.Reiziger.ReizigerModel;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         this.connection = connection;
     }
 
+    @Override
     public boolean save(OVChipkaartModel ovChipkaartModel) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO ov_chipkaart (kaart_nummer, geldig_tot, klasse, saldo, reiziger_id) VALUES (?, ?, ?, ?, ?)");

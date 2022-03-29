@@ -1,9 +1,9 @@
-package models.Reiziger;
+package com.lucas.dpovchipkaart.models.Reiziger;
 
-import models.Adres.AdresDAOPsql;
-import models.Adres.AdresModel;
-import models.OVChipkaart.OVChipkaartDAOPsql;
-import models.OVChipkaart.OVChipkaartModel;
+import com.lucas.dpovchipkaart.models.Adres.AdresDAOPsql;
+import com.lucas.dpovchipkaart.models.Adres.AdresModel;
+import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartDAOPsql;
+import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,9 +11,19 @@ import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection connection;
+    private AdresDAOPsql adresDAOPsql;
+    private OVChipkaartDAOPsql ovChipkaartDAOPsql;
 
     public ReizigerDAOPsql(Connection connection) {
         this.connection = connection;
+    }
+
+    public void setAdresDAOPsql(AdresDAOPsql adresDAOPsql) {
+        this.adresDAOPsql = adresDAOPsql;
+    }
+
+    public void setOvChipkaartDAOPsql(OVChipkaartDAOPsql ovChipkaartDAOPsql) {
+        this.ovChipkaartDAOPsql = ovChipkaartDAOPsql;
     }
 
     public boolean save(ReizigerModel reiziger) {
@@ -30,11 +40,11 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             sqlStatement.close();
 
             if (reiziger.getAdres() != null) {
-                new AdresDAOPsql(connection).save(reiziger.getAdres());
+                adresDAOPsql.save(reiziger.getAdres());
             }
 
             for (OVChipkaartModel ovChipkaart : reiziger.getOvChipkaarten()) {
-                new OVChipkaartDAOPsql(connection).save(ovChipkaart);
+                ovChipkaartDAOPsql.save(ovChipkaart);
             }
 
             return true;
@@ -57,7 +67,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             statement.close();
 
             if (reiziger.getAdres() != null) {
-                new AdresDAOPsql(connection).update(reiziger.getAdres());
+                adresDAOPsql.update(reiziger.getAdres());
             }
 
             return true;
@@ -70,19 +80,27 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public boolean delete(ReizigerModel reiziger) {
         try {
+            AdresModel adres = this.adresDAOPsql.findByReiziger(reiziger);
+            if (adres != null) {
+                this.adresDAOPsql.delete(adres);
+            }
+
+
+            System.out.println("id " + reiziger.getId());
             PreparedStatement statement = connection.prepareStatement("DELETE FROM reiziger WHERE reiziger_id=?");
             statement.setInt(1, reiziger.getId());
 
             statement.execute();
             statement.close();
 
-            OVChipkaartDAOPsql oDAOPsql = new OVChipkaartDAOPsql(connection);
             List<OVChipkaartModel> ovChipkaarten = reiziger.getOvChipkaarten();
+
 
             // Delete ovchipkaarten that are connected
             if (!ovChipkaarten.isEmpty()) {
+                System.out.println("ov chipkaarten");
                 for (OVChipkaartModel ovChipkaartModel : reiziger.getOvChipkaarten()) {
-                    oDAOPsql.delete(ovChipkaartModel);
+                    ovChipkaartDAOPsql.delete(ovChipkaartModel);
                 }
             }
 
@@ -97,7 +115,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM reiziger WHERE reiziger_id=?");
             statement.setInt(1, id);
-            ReizigerModel reiziger = this.fetch(statement).get(0);
+            List<ReizigerModel> result = this.fetch(statement);
+            ReizigerModel reiziger = result.isEmpty() ? null : result.get(0);
 
             return reiziger;
 
@@ -142,7 +161,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             reiziger.setVoorletters(resultSet.getString("voorletters"));
             reiziger.setAchternaam(resultSet.getString("achternaam"));
             reiziger.setGeboortedatum(resultSet.getDate("geboortedatum"));
-            AdresModel adres = new AdresDAOPsql(connection).findByReiziger(reiziger);
+            AdresModel adres = adresDAOPsql.findByReiziger(reiziger);
             if (adres != null) {
                 reiziger.setAdres(adres);
             }

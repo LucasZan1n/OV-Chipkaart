@@ -1,6 +1,6 @@
-package models.Adres;
+package com.lucas.dpovchipkaart.models.Adres;
 
-import models.Reiziger.ReizigerModel;
+import com.lucas.dpovchipkaart.models.Reiziger.ReizigerModel;
 
 import java.util.List;
 

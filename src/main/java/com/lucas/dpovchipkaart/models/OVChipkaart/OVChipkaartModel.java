@@ -1,4 +1,4 @@
-package models.OVChipkaart;
+package com.lucas.dpovchipkaart.models.OVChipkaart;
 
 import java.sql.Date;
 

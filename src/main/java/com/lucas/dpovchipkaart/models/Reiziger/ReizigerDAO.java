@@ -1,4 +1,4 @@
-package models.Reiziger;
+package com.lucas.dpovchipkaart.models.Reiziger;
 
 import java.util.List;
 
