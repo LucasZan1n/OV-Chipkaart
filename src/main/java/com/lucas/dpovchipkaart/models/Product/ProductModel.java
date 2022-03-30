@@ -12,7 +12,7 @@ public class ProductModel {
     private double prijs;
     private List<OVChipkaartModel> ovChipkaarten = new ArrayList<OVChipkaartModel>();
 
-    public ProductModel(int product_nummer, String naam, String beschrijving, double prijs, List<OVChipkaartModel> ovChipkaarten) {
+    public ProductModel(int product_nummer, String naam, String beschrijving, double prijs) {
         this.product_nummer = product_nummer;
         this.naam = naam;
         this.beschrijving = beschrijving;
@@ -38,5 +38,9 @@ public class ProductModel {
 
     public List<OVChipkaartModel> getOvChipkaarten() {
         return ovChipkaarten;
+    }
+
+    public void setOvChipkaarten(List<OVChipkaartModel> ovChipkaarten) {
+        this.ovChipkaarten = ovChipkaarten;
     }
 }

@@ -144,7 +144,8 @@ public class Main {
         ArrayList<OVChipkaartModel> ovChipkaarten = new ArrayList<OVChipkaartModel>();
         ovChipkaarten.add(ov3);
         ovChipkaarten.add(ov4);
-        ProductModel business = new ProductModel(7, "Business", "Voordelig voor werknemers", 199.99, ovChipkaarten);
+        ProductModel business = new ProductModel(7, "Business", "Voordelig voor werknemers", 199.99);
+        business.setOvChipkaarten(ovChipkaarten);
         System.out.println("Save product met ov chipkaarten---------------------------");
         pDAOPsql.save(business);
 

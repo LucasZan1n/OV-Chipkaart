@@ -3,10 +3,8 @@ package com.lucas.dpovchipkaart.models.Product;
 import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartDAOPsql;
 import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartModel;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import javax.xml.transform.Result;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,6 +123,20 @@ public class ProductDAOPsql implements ProductDAO {
         return false;
     }
 
+    public List<ProductModel> findByOVChipkaart(OVChipkaartModel ovChipkaart) {
+        List<ProductModel> producten = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT p.product_nummer, p.naam, p.beschrijving, p.prijs FROM ov_chipkaart_product INNER JOIN product p on ov_chipkaart_product.product_nummer = p.product_nummer WHERE kaart_nummer=?;");
+            statement.setInt(1, ovChipkaart.getKaart_nummer());
+            producten = fetch(statement);
+        } catch(SQLException e) {
+            System.err.println(e);
+        }
+
+        return producten;
+    }
+
     private boolean insertConjunction(int kaart_nummer, int product_nummer) {
         try {
             PreparedStatement statement = this.connection.prepareStatement("INSERT INTO ov_chipkaart_product (kaart_nummer, product_nummer, status, last_update) VALUES (?, ?, ?, CURRENT_DATE)");
@@ -141,5 +153,36 @@ public class ProductDAOPsql implements ProductDAO {
         }
 
         return false;
+    }
+
+    public List<ProductModel> findAll() {
+        List<ProductModel> producten = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM product");
+            producten = fetch(statement);
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+
+        return producten;
+    }
+
+    private List<ProductModel> fetch(PreparedStatement statement) throws SQLException {
+        ResultSet resultSet = statement.executeQuery();
+        ArrayList<ProductModel> producten = new ArrayList<>();
+
+        while (resultSet.next()) {
+            ProductModel product = new ProductModel(
+                    resultSet.getInt("product_nummer"),
+                    resultSet.getString("naam"),
+                    resultSet.getString("beschrijving"),
+                    resultSet.getDouble("prijs"));
+
+            producten.add(product);
+        }
+
+        statement.close();
+        resultSet.close();
+        return producten;
     }
 }
