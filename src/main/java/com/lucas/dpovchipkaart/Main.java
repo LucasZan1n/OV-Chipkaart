@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
     private static ReizigerDAOPsql rDAOPsql;
@@ -26,7 +27,14 @@ public class Main {
     public static void main(String[] args) {
         initializeDaoPsqls();
 
-        testManyToManyRelationship();
+        ArrayList<Integer> test = new ArrayList<>();
+        test.add(1);
+        test.add(2);
+        test.add(15);
+        test.add(3);
+        test.add(4);
+        System.out.println(test.stream().filter(number -> number != 15).collect(Collectors.toList()));
+//        testManyToManyRelationship();
     }
 
     private static void initializeDaoPsqls() {

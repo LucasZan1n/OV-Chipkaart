@@ -106,7 +106,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         return ovChipkaart;
     }
 
-    private ArrayList<OVChipkaartModel> fetch(PreparedStatement statement) throws SQLException {
+    public ArrayList<OVChipkaartModel> fetch(PreparedStatement statement) throws SQLException {
         ResultSet resultSet = statement.executeQuery();
         ArrayList<OVChipkaartModel> ovChipkaarten = new ArrayList<>();
 
