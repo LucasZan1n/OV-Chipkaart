@@ -48,15 +48,16 @@ public class ProductDAOPsql implements ProductDAO {
     @Override
     public boolean update(ProductModel product) {
         try {
-            PreparedStatement statement = this.connection.prepareStatement("UPDATE product SET product_nummer=?, naam=?, beschrijving=?, prijs=?");
-            statement.setInt(1, product.getProduct_nummer());
-            statement.setString(2, product.getNaam());
-            statement.setString(3, product.getBeschrijving());
-            statement.setDouble(4, product.getPrijs());
+            PreparedStatement statement = this.connection.prepareStatement("UPDATE product SET naam=?, beschrijving=?, prijs=? WHERE product_nummer=?");
+            statement.setString(1, product.getNaam());
+            statement.setString(2, product.getBeschrijving());
+            statement.setDouble(3, product.getPrijs());
+            statement.setInt(4, product.getProduct_nummer());
 
             statement.executeUpdate();
             statement.close();
 
+            System.out.println("update conjunction");
             updateConjunctionTable(product);
 
             return true;
@@ -71,10 +72,11 @@ public class ProductDAOPsql implements ProductDAO {
         List<Integer> ovChipKaartIdsToDelete = new ArrayList<>();
         List<Integer> ovChipKaartIdsToInsert = new ArrayList<>();
 
-        List<Integer> productOvIds = product.getOvChipkaarten().stream().map(OVChipkaartModel::getKaart_nummer).toList();
+        List<Integer> productOvIds = product.getOvChipkaarten().stream().map(OVChipkaartModel::getKaart_nummer).collect(Collectors.toList());
 
-        PreparedStatement getOvIdsStatement = this.connection.prepareStatement("SELECT (kaart_nummer) FROM ov_chipkaart_product");
-        List<Integer> ovChipKaartIds = this.ovChipkaartDAOPsql.fetch(getOvIdsStatement).stream().map(OVChipkaartModel::getKaart_nummer).toList();
+        PreparedStatement getOvIdsStatement = this.connection.prepareStatement("SELECT (kaart_nummer) FROM ov_chipkaart_product WHERE product_nummer=?");
+        getOvIdsStatement.setInt(1, product.getProduct_nummer());
+        List<Integer> ovChipKaartIds = this.fetchOVChipKaartIds(getOvIdsStatement);
 
         ovChipKaartIdsToInsert = productOvIds.stream()
                 .filter(ovId -> !ovChipKaartIds.contains(ovId))
@@ -82,13 +84,18 @@ public class ProductDAOPsql implements ProductDAO {
 
         ovChipKaartIdsToDelete = ovChipKaartIds.stream()
                 .filter(ovId -> productOvIds.contains(ovId))
-                .toList();
+                .collect(Collectors.toList());
+
+        System.out.println("Ov van db" + ovChipKaartIds);
+        System.out.println("Ov van product" + productOvIds);
 
         for (int ovChipKaartId : ovChipKaartIdsToInsert) {
+            System.out.println("To insert: \n" + ovChipKaartIdsToInsert);
             insertConjunction(ovChipKaartId, product.getProduct_nummer());
         }
 
         for (int ovChipKaartId : ovChipKaartIdsToDelete) {
+            System.out.println("To delete: \n" + ovChipKaartIdsToDelete);
             PreparedStatement statement = connection.prepareStatement("DELETE FROM ov_chipkaart_product WHERE kaart_nummer=?");
             statement.setInt(1, ovChipKaartId);
 
@@ -184,5 +191,16 @@ public class ProductDAOPsql implements ProductDAO {
         statement.close();
         resultSet.close();
         return producten;
+    }
+
+    private List<Integer> fetchOVChipKaartIds(PreparedStatement statement) throws SQLException {
+        ResultSet resultSet = statement.executeQuery();
+        ArrayList<Integer> ovChipKaartIds = new ArrayList<>();
+
+        while (resultSet.next()) {
+            ovChipKaartIds.add(resultSet.getInt("kaart_nummer"));
+        }
+
+        return ovChipKaartIds;
     }
 }

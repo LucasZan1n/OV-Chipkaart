@@ -26,15 +26,8 @@ public class Main {
 
     public static void main(String[] args) {
         initializeDaoPsqls();
-
-        ArrayList<Integer> test = new ArrayList<>();
-        test.add(1);
-        test.add(2);
-        test.add(15);
-        test.add(3);
-        test.add(4);
-        System.out.println(test.stream().filter(number -> number != 15).collect(Collectors.toList()));
 //        testManyToManyRelationship();
+        testManyToManyConjunctionTable();
     }
 
     private static void initializeDaoPsqls() {
@@ -125,7 +118,7 @@ public class Main {
 //        System.out.println(aDAOPsql.findByReiziger(peter));
 
         // Delete
-        rDAOPsql.delete(peter);
+//        rDAOPsql.delete(peter);
         System.out.println("Should return null");
         System.out.println(rDAOPsql.findById(6));
     }
@@ -156,5 +149,36 @@ public class Main {
         for (OVChipkaartModel ovChipkaart : ovChipkaarten) {
             oDAOPsql.delete(ovChipkaart);
         }
+    }
+
+    public static void testManyToManyConjunctionTable() {
+        OVChipkaartModel ov3 = new OVChipkaartModel(3, Date.valueOf("2023-01-01"), 1, 13.33, 6);
+        OVChipkaartModel ov3Updated = new OVChipkaartModel(3, Date.valueOf("2023-01-01"), 2, 13.33, 6);
+        OVChipkaartModel ov4 = new OVChipkaartModel(4, Date.valueOf("2025-05-12"), 2, 84.23, 6);
+        OVChipkaartModel ov4Updated = new OVChipkaartModel(4, Date.valueOf("2025-05-12"), 2, 84.23, 6);
+        OVChipkaartModel ov5 = new OVChipkaartModel(5, Date.valueOf("2025-05-12"), 2, 84.23, 6);
+        OVChipkaartModel ov6 = new OVChipkaartModel(6, Date.valueOf("2025-05-12"), 1, 84.23, 6);
+
+//        oDAOPsql.save(ov3);
+//        oDAOPsql.save(ov4);
+//        oDAOPsql.save(ov5);
+//        oDAOPsql.save(ov6);
+
+        List<OVChipkaartModel> set1 = new ArrayList<>();
+        List<OVChipkaartModel> set2 = new ArrayList<>();
+        set1.add(ov3);
+        set1.add(ov4);
+        set2.add(ov5);
+        set2.add(ov6);
+
+        ProductModel business = new ProductModel(7, "Business", "Voordelig voor werknemers", 199.99);
+        business.setOvChipkaarten(set1);
+        ProductModel businessUpdated = new ProductModel(7, "Business2", "Voordelig voor werknemers 2.0!", 299.99);
+        businessUpdated.setOvChipkaarten(set2);
+
+//        pDAOPsql.save(business);
+
+        // Test update ovchipkaarten product
+        pDAOPsql.update(businessUpdated);
     }
 }
