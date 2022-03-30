@@ -5,6 +5,8 @@ import com.lucas.dpovchipkaart.models.Adres.AdresDAOPsql;
 import com.lucas.dpovchipkaart.models.Adres.AdresModel;
 import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartDAOPsql;
 import com.lucas.dpovchipkaart.models.OVChipkaart.OVChipkaartModel;
+import com.lucas.dpovchipkaart.models.Product.ProductDAOPsql;
+import com.lucas.dpovchipkaart.models.Product.ProductModel;
 import com.lucas.dpovchipkaart.models.Reiziger.ReizigerDAO;
 import com.lucas.dpovchipkaart.models.Reiziger.ReizigerDAOPsql;
 import com.lucas.dpovchipkaart.models.Reiziger.ReizigerModel;
@@ -19,18 +21,12 @@ public class Main {
     private static ReizigerDAOPsql rDAOPsql;
     private static AdresDAOPsql aDAOPsql;
     private static OVChipkaartDAOPsql oDAOPsql;
+    private static ProductDAOPsql pDAOPsql;
 
     public static void main(String[] args) {
         initializeDaoPsqls();
 
-
-//        testOneToOneRelationship(dao, adresDao);
-//        try {
-//            testAdresDAOPsql(adresDao, dao);
-        testOneToManyRelationShip();
-//        } catch (SQLException e) {
-//            System.out.println(e);
-//        }
+        testManyToManyRelationship();
     }
 
     private static void initializeDaoPsqls() {
@@ -39,6 +35,7 @@ public class Main {
         rDAOPsql = new ReizigerDAOPsql(db.getConnection());
         aDAOPsql = new AdresDAOPsql(db.getConnection());
         oDAOPsql = new OVChipkaartDAOPsql(db.getConnection());
+        pDAOPsql = new ProductDAOPsql(db.getConnection(), oDAOPsql);
 
         rDAOPsql.setAdresDAOPsql(aDAOPsql);
         rDAOPsql.setOvChipkaartDAOPsql(oDAOPsql);
@@ -123,5 +120,32 @@ public class Main {
         rDAOPsql.delete(peter);
         System.out.println("Should return null");
         System.out.println(rDAOPsql.findById(6));
+    }
+
+    /**
+     * Test P5
+     */
+    public static void testManyToManyRelationship() {
+        OVChipkaartModel ov3 = new OVChipkaartModel(3, Date.valueOf("2023-01-01"), 1, 13.33, 6);
+        OVChipkaartModel ov4 = new OVChipkaartModel(4, Date.valueOf("2025-05-12"), 2, 84.23, 6);
+
+        System.out.println("Save ov chipkaarten------------------------------");
+        oDAOPsql.save(ov3);
+        oDAOPsql.save(ov4);
+
+        ArrayList<OVChipkaartModel> ovChipkaarten = new ArrayList<OVChipkaartModel>();
+        ovChipkaarten.add(ov3);
+        ovChipkaarten.add(ov4);
+        ProductModel business = new ProductModel(7, "Business", "Voordelig voor werknemers", 199.99, ovChipkaarten);
+        System.out.println("Save product met ov chipkaarten---------------------------");
+        pDAOPsql.save(business);
+
+        System.out.println("Delete product------------------------------");
+        pDAOPsql.delete(business);
+
+        System.out.println("Delete ov chipkaarten---------------------------");
+        for (OVChipkaartModel ovChipkaart : ovChipkaarten) {
+            oDAOPsql.delete(ovChipkaart);
+        }
     }
 }

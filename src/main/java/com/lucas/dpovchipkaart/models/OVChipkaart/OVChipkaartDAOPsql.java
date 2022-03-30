@@ -1,5 +1,6 @@
 package com.lucas.dpovchipkaart.models.OVChipkaart;
 
+import com.lucas.dpovchipkaart.models.Product.ProductModel;
 import com.lucas.dpovchipkaart.models.Reiziger.ReizigerModel;
 
 import java.sql.*;

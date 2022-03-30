@@ -46,6 +46,10 @@ public class OVChipkaartModel {
         return reiziger_id;
     }
 
+    public List<ProductModel> getProducten() {
+        return producten;
+    }
+
     public void setKaart_nummer(int kaart_nummer) {
         this.kaart_nummer = kaart_nummer;
     }
